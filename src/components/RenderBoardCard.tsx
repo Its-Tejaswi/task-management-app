@@ -58,7 +58,7 @@ const RenderBoardCard = ({ task }) => {
       {...listeners}
       {...attributes}
       style={style}
-      className="shadow-md border-l-4 border-blue-500 mb-3 p-4"
+      className="shadow-md border rounded-2xl mb-3 p-4"
     >
       <IconButton
         className="text-gray-600 hover:bg-gray-100 rounded-full"

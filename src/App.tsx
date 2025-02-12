@@ -3,6 +3,9 @@ import Header from "./components/Header.tsx";
 import TaskViewScreen from "./screens/Auth/TaskViewScreen.tsx";
 import BoardViewScreen from "./screens/Auth/BoardViewScreen.tsx";
 import ActivityTabScreen from "./screens/ActiveTabScreen.tsx";
+
+import { createBrowserRouter } from "react-router";
+import LoginScreen from "./screens/LoginScreen.tsx";
 function App() {
   let content;
 
@@ -27,9 +30,42 @@ function App() {
       break;
 
     case "activity":
-      content = <ActivityTabScreen/>;
+      content = <ActivityTabScreen />;
       break;
   }
+
+  // React Router Impl.
+
+  const router = createBrowserRouter([
+    {
+      index: true,
+      path: "/login",
+      element: <LoginScreen />,
+    },
+    {
+      path: "/",
+      element: (
+        <Auth>
+          <TaskViewScreen filteredTasks={filteredTasks} />,
+        </Auth>
+      ),
+
+      children: [
+        {
+          path: "/task-view",
+          element: (
+            <Auth>
+              <TaskViewScreen filteredTasks={filteredTasks} />,
+            </Auth>
+          ),
+        },
+        {
+          path: "board-view",
+
+        }
+      ],
+    },
+  ]);
 
   return (
     <div className="bg-[#FFF9F9]">

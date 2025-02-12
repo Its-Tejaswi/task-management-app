@@ -4,8 +4,6 @@ import { useSelector } from "react-redux";
 const ActivityTabScreen = () => {
   const activityLogs = useSelector((state) => state.activities.logs);
 
-  console.log(activityLogs);
-
   return (
     <div className="bg-gray-100 min-h-screen p-4 w-full">
       <div className="bg-white shadow-md rounded-2xl p-6 w-full">
