@@ -3,17 +3,16 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
-import TaskList from "../../screens/Auth/TaskList.tsx";
+import TaskList from "../../screens/TaskList.tsx";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Button, TextField, MenuItem, Box } from "@mui/material";
 import { Add, Cancel } from "@mui/icons-material";
-import { useDispatch } from "react-redux";
-import { addTask } from "../../store/slices/tasksSlice.js";
 import { useDroppable } from "@dnd-kit/core";
+import { useAddTaskMutation } from "../../store/query/tasksApi.js";
 
 const ToDoListCard = ({ id, tasks }) => {
   const { setNodeRef } = useDroppable({ id });
-  const dispatch = useDispatch();
+  const [addTask] = useAddTaskMutation();
   const [open, setOpen] = useState(false);
   const [taskTitle, setTaskTitle] = useState("");
   const [taskDueDate, setTaskDueDate] = useState("");
@@ -22,21 +21,18 @@ const ToDoListCard = ({ id, tasks }) => {
 
   const handleToggleForm = () => setOpen(!open);
 
-  const handleAddTask = () => {
+  const handleAddTask = async () => {
     if (!taskTitle || !taskDueDate || !taskStatus || !taskCategory) {
       // Show some toast
       alert("Please enter data");
       return;
     }
-    dispatch(
-      addTask({
-        id: crypto.randomUUID(),
-        name: taskTitle,
-        dueDate: taskDueDate,
-        status: taskStatus,
-        category: taskCategory,
-      })
-    );
+    await addTask({
+      name: taskTitle,
+      dueDate: taskDueDate,
+      status: taskStatus,
+      category: taskCategory,
+    });
     setOpen(false);
     setTaskTitle("");
     setTaskDueDate("");

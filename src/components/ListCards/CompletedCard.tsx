@@ -3,7 +3,7 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
-import TaskList from "../../screens/Auth/TaskList.tsx";
+import TaskList from "../../screens/TaskList.tsx";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useDroppable } from "@dnd-kit/core";
 

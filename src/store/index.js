@@ -17,6 +17,7 @@ export const store = configureStore({
   },
 
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(trackTaskActionsMiddleware),
+    getDefaultMiddleware()
+      .concat(trackTaskActionsMiddleware)
 });
 export { addTask, updateTask, deleteTask, updateTaskStatus, reorderTasks };

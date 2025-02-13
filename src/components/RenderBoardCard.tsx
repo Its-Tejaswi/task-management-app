@@ -9,13 +9,12 @@ import {
 } from "@mui/material";
 import { Delete, Edit, MoreHoriz } from "@mui/icons-material";
 import { useDraggable } from "@dnd-kit/core";
-import { deleteTask } from "../store";
-import { useDispatch } from "react-redux";
 import { Task } from "./RenderFilterCard";
 import TaskUpdateModal from "./TaskUpdateModal.tsx";
+import { useDeleteTaskMutation } from "../store/query/tasksApi.js";
 
 const RenderBoardCard = ({ task }) => {
-  const dispatch = useDispatch();
+  const [deleteTask] = useDeleteTaskMutation();
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: task.id.toString(),
   });
@@ -24,7 +23,7 @@ const RenderBoardCard = ({ task }) => {
 
   const [showEditModal, setShowEditModal] = useState(false);
 
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null); // Store the task to edit
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   const handleContentEdit = (task: Task) => {
     setSelectedTask(task);
@@ -40,8 +39,8 @@ const RenderBoardCard = ({ task }) => {
     setMenuAnchor(null);
   };
 
-  const handleContentDelete = (taskId) => {
-    dispatch(deleteTask(taskId));
+  const handleContentDelete = async (taskId: string | number) => {
+    await deleteTask(taskId);
     handleCloseMenu();
   };
 
@@ -99,8 +98,7 @@ const RenderBoardCard = ({ task }) => {
           Delete
         </MenuItem>
       </Menu>
-
-      {/* Edit Component Clicked and this will open */}
+      
       <TaskUpdateModal
         taskToUpdate={selectedTask}
         open={showEditModal}

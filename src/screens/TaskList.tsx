@@ -1,33 +1,49 @@
 import React, { useState } from "react";
-import RenderFilterCard from "../../components/RenderFilterCard.tsx";
+import RenderFilterCard, { Task } from "../components/RenderFilterCard.tsx";
 import { Button, Menu, MenuItem } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { deleteTask, updateTask } from "../../store/index.js";
+import {
+  useDeleteTaskMutation,
+  useUpdateTaskMutation,
+} from "../store/query/tasksApi.js";
 
 const TaskList = ({ tasks, nodeRef }) => {
-  const dispatch = useDispatch();
+  const [updateTask] = useUpdateTaskMutation();
+
+  const [deleteTask] = useDeleteTaskMutation();
   const handleBulkDelete = () => {
     // I'll just pass the entire IDs of selectedTasks as payload
-    selectedTasks.forEach((task) => dispatch(deleteTask(task)));
+    selectedTasks.forEach(
+      async (task) =>
+        await deleteTask(task)
+    );
     setSelectedTasks([]);
   };
 
-  const handleBulkUpdate = (newStatus) => {
-    // We map through each ID and then take the new status and update
-
-    // Here I got the 2 tasks from the main tasks
-
-    const toUpdateTasks = tasks.filter((task) =>
+  const handleBulkUpdate = async (newStatus: string) => {
+    // Get the tasks that need to be updated
+    const toUpdateTasks = tasks.filter((task: Task) =>
       selectedTasks.includes(task.id)
     );
 
-    toUpdateTasks.forEach((task) =>
-      dispatch(updateTask({ ...task, status: newStatus }))
-    );
+    if (toUpdateTasks.length === 0) {
+      console.warn("No tasks selected for update");
+      return;
+    }
+
+    try {
+      await Promise.all(
+        toUpdateTasks.map(async (task: Task) => {
+          const updatePayload = { status: newStatus };
+          await updateTask({ id: task.id, updatedData: updatePayload });
+        })
+      );
+    } catch (error) {
+      console.error("Bulk update failed:", error);
+    }
+
     setSelectedTasks([]);
   };
-
-  // You can Delete multiple tasks from one single, status group
+  
   const [selectedTasks, setSelectedTasks] = useState<number[]>([]);
 
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);

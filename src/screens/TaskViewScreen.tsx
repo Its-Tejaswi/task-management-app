@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
-import ToDoListCard from "../../components/ListCards/ToDoListCard.tsx";
-import InProgressCard from "../../components/ListCards/InProgressCard.tsx";
-import CompletedCard from "../../components/ListCards/CompletedCard.tsx";
-import { useDispatch } from "react-redux";
+import ToDoListCard from "../components/ListCards/ToDoListCard.tsx";
+import InProgressCard from "../components/ListCards/InProgressCard.tsx";
+import CompletedCard from "../components/ListCards/CompletedCard.tsx";
 
 import { DndContext, closestCorners } from "@dnd-kit/core";
-
-import { updateTaskStatus } from "../../store/index.js";
 import { ArrowDownward, ArrowUpward } from "@mui/icons-material";
-import { Task } from "../../components/RenderFilterCard.tsx";
+import { Task } from "../components/RenderFilterCard.tsx";
+import { useUpdateTaskStatusMutation } from "../store/query/tasksApi.js";
+import NoContent from "../components/NoContent.tsx";
 
 const TaskViewScreen = ({ filteredTasks }) => {
-  const dispatch = useDispatch();
+  const [updateTaskStatus] = useUpdateTaskStatusMutation();
 
   const [orderedTasks, setOrderedTasks] = useState<Task[] | null>(null);
   const [updatedFilteredTasks, setUpdatedFilteredTasks] = useState<
@@ -40,13 +39,19 @@ const TaskViewScreen = ({ filteredTasks }) => {
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
-    if (!over) return; // Dropped outside any board
+    if (!over) return;
 
     const taskId = active.id;
-    const newStatus = over.id; // Target board ID
+    const newStatus = over.id;
 
-    dispatch(updateTaskStatus({ id: taskId, newStatus }));
+    updateTaskStatus({ id: taskId, newStatus });
   };
+
+  // Updating the tasks based on the sorting, ascending or decending order
+
+  if (!updatedFilteredTasks || updatedFilteredTasks.length === 0) {
+    return <NoContent />;
+  }
 
   return (
     <>

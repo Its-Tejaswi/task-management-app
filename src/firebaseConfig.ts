@@ -2,6 +2,15 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import {
+  getDatabase,
+  ref,
+  onValue,
+  set,
+  push,
+  update,
+  remove,
+} from "firebase/database";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -11,12 +20,12 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 // Setup .env file for this
 const firebaseConfig = {
-  apiKey: "AIzaSyDrojvy9wRpIIZEyrDyLJG4MNCTCRoi0bQ",
-  authDomain: "taskmanagement-139cf.firebaseapp.com",
+  apiKey: process.env.REACT_APP_FIREBASE_APIKEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
   projectId: "taskmanagement-139cf",
-  storageBucket: "taskmanagement-139cf.firebasestorage.app",
-  messagingSenderId: "359626291542",
-  appId: "1:359626291542:web:95b2418d3c571e6f2cfef7",
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
   measurementId: "G-B35FP3VCP1",
 };
 
@@ -25,9 +34,12 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
 const auth = getAuth(app); // Authorizing the app
+const database = getDatabase(app); // accessing the database
 const provider = new GoogleAuthProvider(); // authorising from google
 
 export { auth, provider, analytics };
+
+export { database, ref, onValue, set, push, update, remove };
 
 //  --> for hosting
 

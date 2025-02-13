@@ -9,18 +9,18 @@ import {
   IconButton,
   Card,
   CardMedia,
+  Typography, // Import Typography
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { Task } from "./RenderFilterCard";
-import { useDispatch } from "react-redux";
-import { updateTask } from "../store";
+import { useUpdateTaskMutation } from "../store/query/tasksApi";
 
 const TaskUpdateModal: React.FC<{
   open: boolean;
   onClose: () => void;
   taskToUpdate: Task | null;
 }> = ({ open, onClose, taskToUpdate }) => {
-  const dispatch = useDispatch();
+  const [updateTask] = useUpdateTaskMutation();
   const [newUpdateTask, setNewUpdateTask] = useState<Task | null>(null);
 
   useEffect(() => {
@@ -29,15 +29,16 @@ const TaskUpdateModal: React.FC<{
     }
   }, [taskToUpdate]);
 
-  if (!newUpdateTask) return null; // Prevent errors if updateTask is null
+  if (!newUpdateTask) return null;
 
   const handleChange = (field: keyof Task, value: string) => {
     setNewUpdateTask((prev) => (prev ? { ...prev, [field]: value } : prev));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (newUpdateTask) {
-      dispatch(updateTask(newUpdateTask));
+      const updatedData = newUpdateTask;
+      await updateTask({ id: updatedData.id, updatedData });
     }
     onClose();
   };
@@ -50,13 +51,19 @@ const TaskUpdateModal: React.FC<{
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: 500,
+          width: { xs: "90%", sm: 500 }, // Responsive width
           bgcolor: "white",
           boxShadow: 24,
           p: 3,
           borderRadius: 2,
         }}
       >
+        <Typography variant="h6" gutterBottom>
+          {" "}
+          {/* Added title */}
+          Edit Task
+        </Typography>
+
         <TextField
           fullWidth
           label="Task Name"
@@ -75,15 +82,25 @@ const TaskUpdateModal: React.FC<{
           value={newUpdateTask?.description}
           onChange={(e) => handleChange("description", e.target.value)}
           onPointerDown={(e) => e.stopPropagation()}
+          sx={{ mb: 2 }}
         />
 
-        <Box sx={{ display: "flex", gap: 2, my: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 2,
+            my: 2,
+            flexDirection: { xs: "column", sm: "row" },
+          }}
+        >
+          {/* Responsive flex direction */}
           <Button
             variant={
               newUpdateTask?.category === "Work" ? "contained" : "outlined"
             }
             onClick={() => handleChange("category", "Work")}
             onPointerDown={(e) => e.stopPropagation()}
+            sx={{ flex: 1 }} // Equal width on larger screens
           >
             Work
           </Button>
@@ -94,26 +111,35 @@ const TaskUpdateModal: React.FC<{
             onClick={() => handleChange("category", "Personal")}
             onPointerDown={(e) => e.stopPropagation()}
             color="secondary"
+            sx={{ flex: 1 }} // Equal width on larger screens
           >
             Personal
           </Button>
         </Box>
 
-        <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 2,
+            alignItems: "center",
+            flexDirection: { xs: "column", sm: "row" },
+          }}
+        >
+          {/* Responsive flex direction */}
           <TextField
             type="date"
             name="dueDate"
             value={newUpdateTask?.dueDate}
             onChange={(e) => handleChange("dueDate", e.target.value)}
             onPointerDown={(e) => e.stopPropagation()}
-            sx={{ flex: 1 }}
+            sx={{ flex: 1, width: { xs: "100%", sm: "auto" } }} // Full width on small screens
           />
           <Select
             name="status"
             value={newUpdateTask?.status}
             onChange={(e) => handleChange("status", e.target.value)}
             onPointerDown={(e) => e.stopPropagation()}
-            sx={{ flex: 1 }}
+            sx={{ flex: 1, width: { xs: "100%", sm: "auto" } }} // Full width on small screens
           >
             <MenuItem value="Pending">Pending</MenuItem>
             <MenuItem value="In Progress">In Progress</MenuItem>
@@ -127,6 +153,7 @@ const TaskUpdateModal: React.FC<{
               component="img"
               image={newUpdateTask.image}
               alt="Uploaded Preview"
+              sx={{ objectFit: "cover" }} // To prevent image from distorting
             />
             <IconButton
               sx={{
@@ -144,11 +171,22 @@ const TaskUpdateModal: React.FC<{
           </Card>
         )}
 
-        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            mt: 3,
+            flexDirection: { xs: "column-reverse", sm: "row" },
+            gap: 2,
+          }}
+        >
+          {" "}
+          {/* Responsive button order */}
           <Button
             variant="outlined"
             onClick={onClose}
             onPointerDown={(e) => e.stopPropagation()}
+            sx={{ width: "100%", sm: "auto" }} // Full width on small screens
           >
             Cancel
           </Button>
@@ -157,6 +195,7 @@ const TaskUpdateModal: React.FC<{
             color="primary"
             onClick={handleSubmit}
             onPointerDown={(e) => e.stopPropagation()}
+            sx={{ width: "100%", sm: "auto" }} // Full width on small screens
           >
             Update
           </Button>

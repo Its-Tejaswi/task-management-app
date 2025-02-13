@@ -1,83 +1,88 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { User, onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebaseConfig.ts";
+
 import Header from "./components/Header.tsx";
-import TaskViewScreen from "./screens/Auth/TaskViewScreen.tsx";
-import BoardViewScreen from "./screens/Auth/BoardViewScreen.tsx";
+import TaskViewScreen from "./screens/TaskViewScreen.tsx";
+import BoardViewScreen from "./screens/BoardViewScreen.tsx";
 import ActivityTabScreen from "./screens/ActiveTabScreen.tsx";
+import PrivateRoute from "./components/PrivateRoute.tsx";
+import LoginPage from "./screens/LoginPage.tsx";
 
-import { createBrowserRouter } from "react-router";
-import LoginScreen from "./screens/LoginScreen.tsx";
 function App() {
-  let content;
-
-  const [view, setView] = useState("list");
+  const [user, setUser] = useState<User | null>(null);
   const [filteredTasks, setFilteredTasks] = useState([]);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleFilteredTasks = (updatedTasks) => {
     setFilteredTasks(updatedTasks);
   };
 
-  const handleViewChange = (newView: string) => {
-    setView(newView);
-  };
-
-  switch (view) {
-    case "list":
-      content = <TaskViewScreen filteredTasks={filteredTasks} />;
-      break;
-
-    case "board":
-      content = <BoardViewScreen filteredTasks={filteredTasks} />;
-      break;
-
-    case "activity":
-      content = <ActivityTabScreen />;
-      break;
-  }
-
-  // React Router Impl.
-
-  const router = createBrowserRouter([
-    {
-      index: true,
-      path: "/login",
-      element: <LoginScreen />,
-    },
-    {
-      path: "/",
-      element: (
-        <Auth>
-          <TaskViewScreen filteredTasks={filteredTasks} />,
-        </Auth>
-      ),
-
-      children: [
-        {
-          path: "/task-view",
-          element: (
-            <Auth>
-              <TaskViewScreen filteredTasks={filteredTasks} />,
-            </Auth>
-          ),
-        },
-        {
-          path: "board-view",
-
-        }
-      ],
-    },
-  ]);
 
   return (
-    <div className="bg-[#FFF9F9]">
-      {/* <LoginScreen /> */}
-      {/* <TaskList /> */}
-      <Header
-        onViewChange={handleViewChange}
-        setFilteredTasks={handleFilteredTasks}
-      />
+    <Router>
+      <div className="bg-[#FFF9F9]">
+        <Routes>
+          <Route
+            path="/"
+            element={
+              user ? <Navigate to="/task-view" /> : <Navigate to="/login" />
+            }
+          />
+          <Route
+            path="/login"
+            element={user ? <Navigate to="/task-view" /> : <LoginPage />}
+          />
 
-      {content}
-    </div>
+          <Route
+            path="/task-view"
+            element={
+              <PrivateRoute user={user}>
+                <>
+                  <Header setFilteredTasks={handleFilteredTasks} />
+                  <TaskViewScreen filteredTasks={filteredTasks} />
+                </>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/board-view"
+            element={
+              <PrivateRoute user={user}>
+                <>
+                  <Header setFilteredTasks={handleFilteredTasks} />
+                  <BoardViewScreen filteredTasks={filteredTasks} />
+                </>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/activity-log"
+            element={
+              <PrivateRoute user={user}>
+                <>
+                  <Header setFilteredTasks={handleFilteredTasks} />
+                  <ActivityTabScreen />
+                </>
+              </PrivateRoute>
+            }
+          />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 

@@ -8,10 +8,9 @@ const SignIn = () => {
     try {
       // Store user Details and navigate to next page
       const response = await signInWithPopup(auth, provider);
-      console.log(response.user);
+      console.log(response);
     } catch (err) {
       if (err instanceof Error) {
-        console.log(err.message);
         throw new Error(err.message);
       }
     }

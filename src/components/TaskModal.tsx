@@ -23,6 +23,7 @@ import FormatStrikethroughIcon from "@mui/icons-material/FormatStrikethrough";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import { useDispatch } from "react-redux";
 import { addTask } from "../store";
+import { useAddTaskMutation } from "../store/query/tasksApi";
 
 interface TaskModalProps {
   open: boolean;
@@ -31,15 +32,17 @@ interface TaskModalProps {
 
 const TaskModal: React.FC<TaskModalProps> = ({ open, onClose }) => {
   const [task, setTask] = useState({
-    title: "",
+    name: "",
     description: "",
-    date: "",
+    dueDate: "",
     category: "Work",
     status: "",
     file: null as File | null,
   });
 
   const dispatch = useDispatch();
+
+  // const [addTaskToFirebase] = useAddTaskMutation();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Memoized preview image URL
@@ -84,9 +87,9 @@ const TaskModal: React.FC<TaskModalProps> = ({ open, onClose }) => {
 
   const clearForm = useCallback(() => {
     setTask({
-      title: "",
+      name: "",
       description: "",
-      date: "",
+      dueDate: "",
       category: "Work",
       status: "",
       file: null,
@@ -94,25 +97,37 @@ const TaskModal: React.FC<TaskModalProps> = ({ open, onClose }) => {
     onClose();
   }, [onClose]);
 
-  const handleCreateTask = useCallback(() => {
-    if (!task.title || !task.date || !task.status || !task.category) {
+  const [addTask] = useAddTaskMutation();
+
+  const handleNewTaskAdd = async () => {
+    if (!task.name || !task.dueDate || !task.status || !task.category) {
       // Show toast
       alert("Enter Values in fields");
       return;
     }
-    dispatch(
-      addTask({
-        id: crypto.randomUUID(),
-        name: task.title,
-        desciption: task.description,
-        dueDate: task.date,
-        status: task.status,
-        category: task.category,
-        image: previewImage,
-      })
-    );
+    await addTask(task);
     clearForm();
-  }, [dispatch, task, clearForm, previewImage]);
+  };
+
+  // const handleCreateTask = useCallback(() => {
+  //   if (!task.name || !task.date || !task.status || !task.category) {
+  //     // Show toast
+  //     alert("Enter Values in fields");
+  //     return;
+  //   }
+  //   dispatch(
+  //     addTask({
+  //       id: crypto.randomUUID(),
+  //       name: task.name,
+  //       desciption: task.description,
+  //       dueDate: task.date,
+  //       status: task.status,
+  //       category: task.category,
+  //       image: previewImage,
+  //     })
+  //   );
+  //   clearForm();
+  // }, [dispatch, task, clearForm, previewImage]);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -132,12 +147,12 @@ const TaskModal: React.FC<TaskModalProps> = ({ open, onClose }) => {
       <DialogContent>
         {/* Task Title */}
         <TextField
-          label="Task title"
+          label="Task Name"
           fullWidth
           margin="dense"
           variant="outlined"
-          name="title"
-          value={task.title}
+          name="name"
+          value={task.name}
           onChange={handleChange}
         />
 
@@ -193,8 +208,8 @@ const TaskModal: React.FC<TaskModalProps> = ({ open, onClose }) => {
             label="Due on*"
             fullWidth
             InputLabelProps={{ shrink: true }}
-            name="date"
-            value={task.date}
+            name="dueDate"
+            value={task.dueDate}
             onChange={handleChange}
           />
           <Select
@@ -266,7 +281,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ open, onClose }) => {
         <Button
           variant="contained"
           sx={{ bgcolor: "#AF71C6" }}
-          onClick={handleCreateTask}
+          onClick={handleNewTaskAdd}
         >
           Create
         </Button>

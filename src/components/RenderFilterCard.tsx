@@ -8,10 +8,12 @@ import {
   Menu,
 } from "@mui/material";
 import { Delete, Edit, MoreVert } from "@mui/icons-material";
-import { useDispatch } from "react-redux";
-import { deleteTask, updateTask } from "../store/slices/tasksSlice";
 import { useDraggable } from "@dnd-kit/core";
 import TaskUpdateModal from "./TaskUpdateModal.tsx";
+import {
+  useDeleteTaskMutation,
+  useUpdateTaskMutation,
+} from "../store/query/tasksApi.js";
 
 export interface Task {
   id: number;
@@ -34,7 +36,8 @@ const RenderFilterCard: React.FC<RenderFilterCardProps> = ({
   selectedTasks,
   setSelectedTasks,
 }) => {
-  const dispatch = useDispatch();
+  const [deleteTask] = useDeleteTaskMutation();
+  const [updateTask] = useUpdateTaskMutation();
   const [selectedStatus, setSelectedStatus] = useState(task.status);
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const [statusMenuAnchor, setStatusMenuAnchor] = useState<null | HTMLElement>(
@@ -50,13 +53,12 @@ const RenderFilterCard: React.FC<RenderFilterCardProps> = ({
     );
   };
 
-  const handleContentDelete = (taskId) => {
-    dispatch(deleteTask(taskId));
+  const handleContentDelete = async (taskId: string | number) => {
+    await deleteTask(taskId);
     setMenuAnchor(null);
   };
 
   const [showEditModal, setShowEditModal] = useState(false);
-
   const [selectedTask, setSelectedTask] = useState<Task | null>(null); // Store the task to edit
 
   const handleContentEdit = (task: Task) => {
@@ -65,16 +67,25 @@ const RenderFilterCard: React.FC<RenderFilterCardProps> = ({
     setMenuAnchor(null);
   };
 
-  const handleStatusChange = (newStatus) => {
-    const validTransitions: Record<string, Set<string>> = {
+  const handleStatusChange = async (newStatus: string) => {
+    const validTransitions = {
       Pending: new Set(["In Progress"]),
       "In Progress": new Set(["Pending", "Completed"]),
       Completed: new Set(["Pending"]),
     };
 
     if (validTransitions[selectedStatus]?.has(newStatus)) {
-      dispatch(updateTask({ ...task, status: newStatus }));
-      setSelectedStatus(newStatus);
+      if (!task?.id) {
+        console.error("Task ID is missing");
+        return;
+      }
+      const updatePayload = { status: newStatus };
+      try {
+        await updateTask({ id: task.id, updatedData: updatePayload });
+        setSelectedStatus(newStatus);
+      } catch (error) {
+        console.error("Update failed:", error);
+      }
     } else {
       alert("Cannot Perform Wrong Operation !!!");
     }
@@ -99,7 +110,6 @@ const RenderFilterCard: React.FC<RenderFilterCardProps> = ({
       style={style}
       className="bg-gray-100 p-4 rounded-lg shadow-md flex flex-col sm:flex-row items-center justify-between gap-4"
     >
-      {/* Checkbox and Task Info */}
       <div className="flex items-center justify-center gap-4 w-full">
         <Checkbox
           checked={selectedTasks.includes(task.id)}
@@ -108,7 +118,7 @@ const RenderFilterCard: React.FC<RenderFilterCardProps> = ({
           color="primary"
         />
 
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 w-full text-gray-800">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-4 w-full text-gray-800 items-center">
           <Typography
             className={`font-medium text-lg text-center ${
               selectedStatus === "Completed" ? "line-through text-gray-500" : ""
@@ -121,26 +131,27 @@ const RenderFilterCard: React.FC<RenderFilterCardProps> = ({
           </Typography>
           <Button
             variant="outlined"
-            className="w-24 rounded-lg bg-gray-400 text-white font-semibold"
+            className="w-full md:w-24 rounded-lg bg-gray-400 text-white font-semibold text-xs justify-self-center"
             sx={{
               backgroundColor: "gray",
               color: "white",
               border: "none",
               "&:hover": { backgroundColor: "darkgray" },
               width: "40%",
+              // marginLeft: 8
             }}
             onClick={(e) => setStatusMenuAnchor(e.currentTarget)}
             onPointerDown={(e) => e.stopPropagation()}
           >
             {selectedStatus}
           </Button>
-          <Typography className="text-gray-600">{task.category}</Typography>
+          <Typography className="text-sm md:text-base text-left md:text-center break-words justify-self-center">
+            {task.category}
+          </Typography>
         </div>
       </div>
-
-      {/* Actions Menu */}
       <IconButton
-        className="text-gray-600 hover:bg-gray-200 rounded-full"
+        className="text-gray-600 hover:bg-gray-200 rounded-full self-start md:self-center"
         onClick={(e) => setMenuAnchor(e.currentTarget)}
         onPointerDown={(e) => e.stopPropagation()}
       >
