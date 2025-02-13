@@ -88,7 +88,7 @@ const ToDoListCard = ({ id, tasks }) => {
 
           {open && (
             <Box
-              className="w-[80%] bg-gray-200 p-5 rounded-xl mt-4"
+              className="w-[90%] md:w-[80%] bg-gray-200 p-3 md:p-5 rounded-xl mt-4 mx-auto"
               sx={{
                 display: "flex",
                 flexDirection: "column",
@@ -99,7 +99,7 @@ const ToDoListCard = ({ id, tasks }) => {
               <Box
                 sx={{
                   display: "flex",
-                  flexDirection: "row",
+                  flexDirection: { xs: "column", md: "row" },
                   alignItems: "center",
                   gap: 2,
                   flexWrap: "wrap",
@@ -110,7 +110,11 @@ const ToDoListCard = ({ id, tasks }) => {
                   value={taskTitle}
                   onChange={(e) => setTaskTitle(e.target.value)}
                   margin="dense"
-                  sx={{ flex: 1, borderRadius: "10px" }}
+                  fullWidth 
+                  sx={{
+                    flex: { xs: 1, md: 1 },
+                    borderRadius: "10px",
+                  }}
                 />
                 <TextField
                   type="date"
@@ -119,7 +123,11 @@ const ToDoListCard = ({ id, tasks }) => {
                   value={taskDueDate}
                   onChange={(e) => setTaskDueDate(e.target.value)}
                   margin="dense"
-                  sx={{ flex: 1, borderRadius: "10px" }}
+                  fullWidth
+                  sx={{
+                    flex: { xs: 1, md: 1 },
+                    borderRadius: "10px",
+                  }}
                 />
                 <TextField
                   select
@@ -127,7 +135,11 @@ const ToDoListCard = ({ id, tasks }) => {
                   value={taskStatus}
                   onChange={(e) => setTaskStatus(e.target.value)}
                   margin="dense"
-                  sx={{ flex: 1, borderRadius: "10px" }}
+                  fullWidth
+                  sx={{
+                    flex: { xs: 1, md: 1 },
+                    borderRadius: "10px",
+                  }}
                 >
                   <MenuItem value="Pending">Pending</MenuItem>
                   <MenuItem value="In Progress">In Progress</MenuItem>
@@ -139,7 +151,11 @@ const ToDoListCard = ({ id, tasks }) => {
                   value={taskCategory}
                   onChange={(e) => setTaskCategory(e.target.value)}
                   margin="dense"
-                  sx={{ flex: 1, borderRadius: "10px" }}
+                  fullWidth
+                  sx={{
+                    flex: { xs: 1, md: 1 },
+                    borderRadius: "10px",
+                  }}
                 >
                   <MenuItem value="Work">Work</MenuItem>
                   <MenuItem value="Personal">Personal</MenuItem>
@@ -150,6 +166,7 @@ const ToDoListCard = ({ id, tasks }) => {
                   display: "flex",
                   justifyContent: "flex-end",
                   gap: 2,
+                  mt: 2,
                 }}
               >
                 <Button
