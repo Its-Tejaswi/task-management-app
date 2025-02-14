@@ -21,8 +21,6 @@ import FormatBoldIcon from "@mui/icons-material/FormatBold";
 import FormatItalicIcon from "@mui/icons-material/FormatItalic";
 import FormatStrikethroughIcon from "@mui/icons-material/FormatStrikethrough";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
-import { useDispatch } from "react-redux";
-import { addTask } from "../store";
 import { useAddTaskMutation } from "../store/query/tasksApi";
 
 interface TaskModalProps {
@@ -40,12 +38,9 @@ const TaskModal: React.FC<TaskModalProps> = ({ open, onClose }) => {
     file: null as File | null,
   });
 
-  const dispatch = useDispatch();
 
-  // const [addTaskToFirebase] = useAddTaskMutation();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Memoized preview image URL
   const previewImage = useMemo(
     () => (task.file ? URL.createObjectURL(task.file) : null),
     [task.file]
@@ -109,26 +104,6 @@ const TaskModal: React.FC<TaskModalProps> = ({ open, onClose }) => {
     clearForm();
   };
 
-  // const handleCreateTask = useCallback(() => {
-  //   if (!task.name || !task.date || !task.status || !task.category) {
-  //     // Show toast
-  //     alert("Enter Values in fields");
-  //     return;
-  //   }
-  //   dispatch(
-  //     addTask({
-  //       id: crypto.randomUUID(),
-  //       name: task.name,
-  //       desciption: task.description,
-  //       dueDate: task.date,
-  //       status: task.status,
-  //       category: task.category,
-  //       image: previewImage,
-  //     })
-  //   );
-  //   clearForm();
-  // }, [dispatch, task, clearForm, previewImage]);
-
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle
@@ -145,7 +120,6 @@ const TaskModal: React.FC<TaskModalProps> = ({ open, onClose }) => {
       </DialogTitle>
 
       <DialogContent>
-        {/* Task Title */}
         <TextField
           label="Task Name"
           fullWidth
@@ -156,7 +130,6 @@ const TaskModal: React.FC<TaskModalProps> = ({ open, onClose }) => {
           onChange={handleChange}
         />
 
-        {/* Description with Formatting Icons */}
         <TextField
           label="Description"
           multiline
@@ -186,8 +159,6 @@ const TaskModal: React.FC<TaskModalProps> = ({ open, onClose }) => {
             ),
           }}
         />
-
-        {/* Task Category */}
         <Typography variant="subtitle2" mt={2}>
           Task Category*
         </Typography>
@@ -201,7 +172,6 @@ const TaskModal: React.FC<TaskModalProps> = ({ open, onClose }) => {
           <ToggleButton value="Personal">Personal</ToggleButton>
         </ToggleButtonGroup>
 
-        {/* Due Date & Task Status */}
         <Box display="flex" gap={2} mt={2}>
           <TextField
             type="date"
@@ -226,8 +196,6 @@ const TaskModal: React.FC<TaskModalProps> = ({ open, onClose }) => {
             <MenuItem value="Completed">Completed</MenuItem>
           </Select>
         </Box>
-
-        {/* File Upload */}
         <Typography variant="subtitle2" mt={3}>
           Attachment
         </Typography>
@@ -256,7 +224,6 @@ const TaskModal: React.FC<TaskModalProps> = ({ open, onClose }) => {
           />
         </Box>
 
-        {/* Preview Uploaded File */}
         {task.file && (
           <Box mt={2}>
             <Typography variant="body2" color="success.main">
@@ -273,7 +240,6 @@ const TaskModal: React.FC<TaskModalProps> = ({ open, onClose }) => {
         )}
       </DialogContent>
 
-      {/* Buttons */}
       <DialogActions sx={{ p: 2 }}>
         <Button onClick={onClose} variant="outlined">
           Cancel

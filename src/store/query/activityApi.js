@@ -1,11 +1,5 @@
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
-import {
-  database,
-  ref,
-  onValue,
-  push,
-  set,
-} from "../../firebaseConfig.ts";
+import { database, ref, onValue, push, set } from "../../firebaseConfig.ts";
 
 export const activityApi = createApi({
   reducerPath: "activityApi",
@@ -13,7 +7,6 @@ export const activityApi = createApi({
   tagTypes: ["ActivityLogs"],
 
   endpoints: (builder) => ({
-    // 🔹 Log an Activity Event
     logActivity: builder.mutation({
       async queryFn(logEntry) {
         try {
@@ -32,7 +25,6 @@ export const activityApi = createApi({
       invalidatesTags: ["ActivityLogs"],
     }),
 
-    // 🔹 Fetch Activity Logs
     getActivityLogs: builder.query({
       async queryFn() {
         try {

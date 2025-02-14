@@ -2,6 +2,7 @@ import React from "react";
 import { useGetActivityLogsQuery } from "../store/query/activityApi";
 
 const ActivityTabScreen = () => {
+  //@ts-ignore
   const { data: logs, isLoading, error } = useGetActivityLogsQuery();
   const activityLogs = logs || [];
 
@@ -12,7 +13,6 @@ const ActivityTabScreen = () => {
           📝 Activity Logs
         </h2>
 
-        {/* Loading and Error States */}
         {isLoading && (
           <p className="text-gray-500 text-center italic">Loading logs...</p>
         )}
@@ -22,7 +22,6 @@ const ActivityTabScreen = () => {
           </p>
         )}
 
-        {/* Activity Logs List */}
         <ul className="space-y-4">
           {activityLogs.length > 0 ? (
             activityLogs.map((log) => (
@@ -37,7 +36,6 @@ const ActivityTabScreen = () => {
                 </div>
                 <p className="mt-2 text-gray-700 font-medium">{log.message}</p>
 
-                {/* If message contains JSON data, format it */}
                 {log.message.includes("{") && (
                   <pre className="mt-2 p-2 bg-gray-200 text-xs text-gray-600 rounded-lg overflow-auto max-h-40">
                     {JSON.stringify(

@@ -30,7 +30,6 @@ const Filter = ({ tasks, filterStatus }) => {
       const categoryMatch = category === "All" || task.category === category;
       return textMatch && dateMatch && statusMatch && categoryMatch;
     });
-    // onFilter(filteredTasks);
   };
 
   const handleFilterClear = () => {
@@ -39,7 +38,6 @@ const Filter = ({ tasks, filterStatus }) => {
     setStatus(filterStatus);
     setCategory("All");
 
-    // onFilter(tasks);
   };
 
   return (

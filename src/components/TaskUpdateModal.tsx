@@ -9,7 +9,7 @@ import {
   IconButton,
   Card,
   CardMedia,
-  Typography, // Import Typography
+  Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { Task } from "./RenderFilterCard";
@@ -51,7 +51,7 @@ const TaskUpdateModal: React.FC<{
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: { xs: "90%", sm: 500 }, // Responsive width
+          width: { xs: "90%", sm: 500 },
           bgcolor: "white",
           boxShadow: 24,
           p: 3,
@@ -60,7 +60,6 @@ const TaskUpdateModal: React.FC<{
       >
         <Typography variant="h6" gutterBottom>
           {" "}
-          {/* Added title */}
           Edit Task
         </Typography>
 
@@ -93,14 +92,13 @@ const TaskUpdateModal: React.FC<{
             flexDirection: { xs: "column", sm: "row" },
           }}
         >
-          {/* Responsive flex direction */}
           <Button
             variant={
               newUpdateTask?.category === "Work" ? "contained" : "outlined"
             }
             onClick={() => handleChange("category", "Work")}
             onPointerDown={(e) => e.stopPropagation()}
-            sx={{ flex: 1 }} // Equal width on larger screens
+            sx={{ flex: 1 }}
           >
             Work
           </Button>
@@ -111,7 +109,7 @@ const TaskUpdateModal: React.FC<{
             onClick={() => handleChange("category", "Personal")}
             onPointerDown={(e) => e.stopPropagation()}
             color="secondary"
-            sx={{ flex: 1 }} // Equal width on larger screens
+            sx={{ flex: 1 }}
           >
             Personal
           </Button>
@@ -125,21 +123,20 @@ const TaskUpdateModal: React.FC<{
             flexDirection: { xs: "column", sm: "row" },
           }}
         >
-          {/* Responsive flex direction */}
           <TextField
             type="date"
             name="dueDate"
             value={newUpdateTask?.dueDate}
             onChange={(e) => handleChange("dueDate", e.target.value)}
             onPointerDown={(e) => e.stopPropagation()}
-            sx={{ flex: 1, width: { xs: "100%", sm: "auto" } }} // Full width on small screens
+            sx={{ flex: 1, width: { xs: "100%", sm: "auto" } }}
           />
           <Select
             name="status"
             value={newUpdateTask?.status}
             onChange={(e) => handleChange("status", e.target.value)}
             onPointerDown={(e) => e.stopPropagation()}
-            sx={{ flex: 1, width: { xs: "100%", sm: "auto" } }} // Full width on small screens
+            sx={{ flex: 1, width: { xs: "100%", sm: "auto" } }}
           >
             <MenuItem value="Pending">Pending</MenuItem>
             <MenuItem value="In Progress">In Progress</MenuItem>
@@ -153,7 +150,7 @@ const TaskUpdateModal: React.FC<{
               component="img"
               image={newUpdateTask.image}
               alt="Uploaded Preview"
-              sx={{ objectFit: "cover" }} // To prevent image from distorting
+              sx={{ objectFit: "cover" }}
             />
             <IconButton
               sx={{
@@ -181,12 +178,11 @@ const TaskUpdateModal: React.FC<{
           }}
         >
           {" "}
-          {/* Responsive button order */}
           <Button
             variant="outlined"
             onClick={onClose}
             onPointerDown={(e) => e.stopPropagation()}
-            sx={{ width: "100%", sm: "auto" }} // Full width on small screens
+            sx={{ width: "100%", sm: "auto" }}
           >
             Cancel
           </Button>
@@ -195,7 +191,7 @@ const TaskUpdateModal: React.FC<{
             color="primary"
             onClick={handleSubmit}
             onPointerDown={(e) => e.stopPropagation()}
-            sx={{ width: "100%", sm: "auto" }} // Full width on small screens
+            sx={{ width: "100%", sm: "auto" }}
           >
             Update
           </Button>

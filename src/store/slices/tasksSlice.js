@@ -94,7 +94,6 @@ export const taskSlice = createSlice({
   },
 });
 
-// Middleware
 export const trackTaskActionsMiddleware = (storeAPI) => (next) => (action) => {
   const result = next(action);
 

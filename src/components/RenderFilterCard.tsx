@@ -138,7 +138,6 @@ const RenderFilterCard: React.FC<RenderFilterCardProps> = ({
               border: "none",
               "&:hover": { backgroundColor: "darkgray" },
               width: "40%",
-              // marginLeft: 8
             }}
             onClick={(e) => setStatusMenuAnchor(e.currentTarget)}
             onPointerDown={(e) => e.stopPropagation()}

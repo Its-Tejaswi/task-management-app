@@ -8,7 +8,7 @@ import {
   update,
   remove,
 } from "../../firebaseConfig.ts";
-import { activityApi } from "./activityApi"; // ✅ Import activity API
+import { activityApi } from "./activityApi";
 
 export const firebaseApi = createApi({
   reducerPath: "firebaseApi",
@@ -16,7 +16,6 @@ export const firebaseApi = createApi({
   tagTypes: ["Tasks"],
 
   endpoints: (builder) => ({
-    // 🔹 Get Real-time Data
     getTasks: builder.query({
       async queryFn() {
         try {
@@ -41,7 +40,6 @@ export const firebaseApi = createApi({
       providesTags: ["Tasks"],
     }),
 
-    // 🔹 Add a Task
     addTask: builder.mutation({
       async queryFn(newTask) {
         try {
@@ -64,7 +62,7 @@ export const firebaseApi = createApi({
       },
       invalidatesTags: ["Tasks"],
     }),
-    
+
     updateTask: builder.mutation({
       async queryFn({ id, updatedData }) {
         try {
@@ -96,7 +94,6 @@ export const firebaseApi = createApi({
       invalidatesTags: ["Tasks"],
     }),
 
-    // 🔹 Update Task Status (for Drag-and-Drop)
     updateTaskStatus: builder.mutation({
       async queryFn({ id, newStatus }) {
         try {
@@ -117,7 +114,6 @@ export const firebaseApi = createApi({
       ) => {
         let patchResult;
         try {
-          // ✅ Optimistically update cache before request completes
           patchResult = dispatch(
             firebaseApi.util.updateQueryData("getTasks", undefined, (draft) => {
               const task = draft.find((t) => t.id === id);
@@ -129,7 +125,6 @@ export const firebaseApi = createApi({
 
           await queryFulfilled;
 
-          // ✅ Log activity
           dispatch(
             activityApi.endpoints.logActivity.initiate({
               message: `Updated status of task ID: ${id} to "${newStatus}"`,
@@ -142,7 +137,6 @@ export const firebaseApi = createApi({
       invalidatesTags: ["Tasks"],
     }),
 
-    // 🔹 Delete a Task
     deleteTask: builder.mutation({
       async queryFn(id) {
         try {
